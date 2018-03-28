@@ -11,7 +11,7 @@ ARCH:=$(shell go env GOOS)_$(shell go env GOARCH)
 TAG?=$(shell git describe --tags --dirty --always)
 
 # IMAGE is the image name of the node-disk-manager docker image.
-IMAGE:=openebs/node-disk-manager:$(TAG)
+IMAGE:=openebs/node-disk-manager-$(shell go env GOARCH):$(TAG)
 
 # The ubuntu:16.04 image is being used as base image.
 BASEIMAGE:=ubuntu:16.04

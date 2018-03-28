@@ -1,6 +1,11 @@
 language: go
 
-go: stable
+go:
+  - 1.9
+
+env:
+  global:
+   - ARCH=${go env GOARCH}
 
 sudo: required
 
@@ -14,6 +19,7 @@ script:
   - make && make test
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then export REPO=openebs/node-disk-manager;
+  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then 
+     export REPO=openebs/node-disk-manager-$ARCH;
      docker login -u "$DNAME" -p "$DPASS" && docker push $REPO; 
     fi
