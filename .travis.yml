@@ -1,11 +1,14 @@
 language: go
 
 go:
-  - 1.9
+  - 1.9.2
 
 env:
   global:
    - ARCH=$(go env GOARCH)
+   - TAG=$(git describe --tags --always)
+   - IMAGEID=$(docker images -q openebs/node-disk-manager:$TAG)
+
 
 sudo: required
 
@@ -25,6 +28,32 @@ script:
 
 after_success:
   - if [ "$TRAVIS_BRANCH" = "Test_build" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then 
-     export REPO=openebs/node-disk-manager-$ARCH;
-     docker login -u "$DNAME" -p "$DPASS" && docker push $REPO; 
-    fi
+     export REPO=openebs/node-disk-manager-$ARCH:$TAG;
+     docker login -u "$DNAME" -p "$DPASS";
+     docker push $REPO;
+     if [ ! -z "${TRAVIS_TAG}" ] ; 
+     then
+       #Push the release tag image to docker hub repository
+       #When a git hub is tagged with a release, the travis will 
+       #hold the release tag in env TRAVIS_TAG
+       sudo docker tag ${IMAGEID} openebs/node-disk-manager:${TRAVIS_TAG}
+       sudo docker push openebs/node-disk-manager:${TRAVIS_TAG}; 
+       sudo docker tag ${IMAGEID} openebs/node-disk-manager:latest
+       sudo docker push openebs/node-disk-manager:latest; 
+     fi;
+    fi;
+
+deploy:
+  provider: releases
+  api_key:
+    secure: wnk2/0YEhjQXxQPH4YeONaXvKT+ggumy8Jz4mI1c2mCpwYzOEVBnaZ1HRGkR6Xh1xHDlyGiytuP+9AJzVhFLAL1LYYQfz9VKpcSmDmrRXeqi8HgtUe50+ZAM/QPVUFnlsD/sw4OW0GL11WdEqgSu35YcnBYA6sO4ysYMzoDlEAaRAZbpJUu/F1b9UmNn7mDbxu1Tyk7BhuQFfoanth1T3iuRGBGuJLC0T4pLXlKYltXcO/Qix1QXCbotLNIhLgyAuEQpi2RGK8Ng7VmwjfbQ6W1b9KqfuKZjq4zeFQKpK3kRZtLZbxCGckQI4e0swdESbQSUDp6OshPNmfDyRFWq7NUeDKlS0iXu2Z4ncs1Y40iKKHkPAQOKff8la9xENgXNJCfy8/Tnd5Mq+A0dk6OID+Mak3DESCAtOaB+tBH7bw5Vdlsa6WGV/GsGQlm8SmZFdtKOt5ZVPaUKDGSLCWkjWrnbdrc0GpI+yGe/Mg7rjkIhdwRlknpGgS0/MlrBcricQHfMlXrQbDZbbKSLuuMAX5ziXodfytAdkN9IDFTP9GesdEENyO1Z2Xoag1aGUSpOZ+gQqpj5kOQzQ78AkkTZ+hbDQFrT433ZNVXPSAFvTlYOwGMfwIgJb/RmBgZtjI6ojIqo4QQfUcMtZiEBf8Q1BBES3ttU3pvc/s9IkyfOcEg=
+  file:
+   - bin/ndmctl-386.zip
+   - bin/ndmctl-amd64.zip
+  skip_cleanup: true
+  overwrite: true
+  on:
+    repo: openebs/node-disk-manager
+    tags: true
+    branch: Test_build
+
