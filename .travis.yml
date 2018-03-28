@@ -5,7 +5,7 @@ go:
 
 env:
   global:
-   - ARCH=${go env GOARCH}
+   - ARCH=${shell go env GOARCH}
 
 sudo: required
 
