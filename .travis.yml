@@ -24,7 +24,7 @@ script:
   - make && make test
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" = "Test_build" -a "$TRAVIS_PULL_REQUEST" = "true" ]; then 
+  - if [ "$TRAVIS_BRANCH" = "Test_build" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then 
      export REPO=openebs/node-disk-manager-$ARCH;
      docker login -u "$DNAME" -p "$DPASS" && docker push $REPO; 
     fi
