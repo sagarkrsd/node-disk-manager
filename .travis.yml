@@ -16,9 +16,9 @@ install:
   - make bootstrap
   
 install:
-  - mkdir -p $HOME/gopath/src/openebs
-  - mv $TRAVIS_BUILD_DIR $HOME/gopath/src/openebs/node-disk-manager
-  - cd $HOME/gopath/src/openebs/node-disk-manager
+  - mkdir -p $HOME/gopath/src/github.com/openebs
+  - mv $TRAVIS_BUILD_DIR $HOME/gopath/src/github.com/openebs/node-disk-manager
+  - cd $HOME/gopath/src/github.com/openebs/node-disk-manager
 
 script:
   - make && make test
