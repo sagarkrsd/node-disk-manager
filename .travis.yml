@@ -7,6 +7,7 @@ env:
   global:
    - ARCH=$(go env GOARCH)
    - TAG=$(git describe --tags --always)
+   - IMAGEID=$(docker images -q openebs/node-disk-manager-$ARCH:$TAG)
 
 sudo: required
 
@@ -29,11 +30,13 @@ after_success:
       export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
       docker push $REPO:$TAG;
+      docker tag ${IMAGEID} $REPO:latest
       docker push $REPO:latest;
     fi
   - if [ -n "$TRAVIS_TAG" ]; then
       export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
       docker push $REPO:$TRAVIS_TAG;
+      docker tag ${IMAGEID} $REPO:latest
       docker push $REPO:latest;
     fi
