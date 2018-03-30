@@ -19,14 +19,21 @@ install:
 script:
   - make && make test
 
+before_script:
+  - mkdir -p $HOME/gopath/src/github.com/openebs
+  - mv $TRAVIS_BUILD_DIR $HOME/gopath/src/github.com/openebs/node-disk-manager
+  - cd $HOME/gopath/src/github.com/openebs/node-disk-manager
+
 after_success:
   - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-      export REPO=openebs/node-disk-manager-$ARCH:$TAG;
+      export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
-      docker push $REPO;
+      docker push $REPO:$TAG;
+      docker push $REPO:latest;
     fi
   - if [ -n "$TRAVIS_TAG" ]; then
-      export REPO=openebs/node-disk-manager-$ARCH:$TAG;
+      export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
-      docker push $REPO;
+      docker push $REPO:$TRAVIS_TAG;
+      docker push $REPO:latest;
     fi
