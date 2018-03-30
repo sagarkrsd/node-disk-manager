@@ -26,17 +26,17 @@ before_script:
   - cd $HOME/gopath/src/github.com/openebs/node-disk-manager
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+  - if [ "$TRAVIS_BRANCH" = "travis_ci" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
       export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
       docker push $REPO:$TAG;
-      docker tag ${IMAGEID} $REPO:latest
+      docker tag $IMAGEID $REPO:latest
       docker push $REPO:latest;
     fi
   - if [ -n "$TRAVIS_TAG" ]; then
       export REPO=openebs/node-disk-manager-$ARCH;
       docker login -u "$DNAME" -p "$DPASS";
       docker push $REPO:$TRAVIS_TAG;
-      docker tag ${IMAGEID} $REPO:latest
+      docker tag $IMAGEID $REPO:latest
       docker push $REPO:latest;
     fi
