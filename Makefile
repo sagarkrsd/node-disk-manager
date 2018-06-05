@@ -3,7 +3,7 @@ NODE_DISK_MANAGER=ndm
 
 # Build the node-disk-manager image.
 
-build: clean vet fmt ndm version docker
+build: clean bootstrap vet fmt ndm version docker
 
 PACKAGES = $(shell go list ./... | grep -v '/vendor/')
 
@@ -53,6 +53,7 @@ bootstrap:
 		echo "Installing $$tool" ; \
 		go get -u $$tool; \
 	done
+	git clone https://github.com/sagarkrsd/smart.git $(shell go env GOPATH)/src/github.com/openebs/smart
 
 Dockerfile: Dockerfile.in
 	sed -e 's|@BASEIMAGE@|$(BASEIMAGE)|g' $< >$@
@@ -86,7 +87,8 @@ clean: header
 	@echo '--> Cleaning directory...'
 	rm -rf bin
 	rm -rf ${GOPATH}/bin/${NODE_DISK_MANAGER}
-	rm -rf ${GOPATH}/pkg/*
+#	rm -rf ${GOPATH}/pkg/*
+	rm -rf ${GOPATH}/src/github.com/openebs/smart
 	@echo '--> Done cleaning.'
 	@echo
 

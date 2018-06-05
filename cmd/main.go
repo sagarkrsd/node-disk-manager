@@ -17,16 +17,20 @@ limitations under the License.
 package main
 
 import (
-	"os"
-
+	"fmt"
 	"github.com/openebs/node-disk-manager/cmd/app/command"
 	ndmlogger "github.com/openebs/node-disk-manager/pkg/logs"
+	smart "github.com/openebs/smart"
+	"os"
 )
 
 func main() {
 	if err := run(); err != nil {
 		os.Exit(1)
 	}
+
+	(smart.Scan())
+	fmt.Println(smart.DiskDetails("/dev/sda").ModelNumber)
 	os.Exit(0)
 }
 
